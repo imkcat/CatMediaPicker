@@ -120,7 +120,70 @@ class CatPhotosListController: UICollectionViewController, UICollectionViewDeleg
     var cancelBarButtonItem: UIBarButtonItem?
     var photosAssets: [PHAsset] = []
     var selectedAssetIndexPaths: [IndexPath] = []
-    
+    var authorizationStatus: PHAuthorizationStatus = PHPhotoLibrary.authorizationStatus() {
+        didSet {
+            switch authorizationStatus {
+            case .authorized:
+                let fetchOptions = PHFetchOptions()
+                fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+                let fetchResult = PHAsset.fetchAssets(with: self.pickerControllerConfigure.mediaType, options: fetchOptions)
+                fetchResult.enumerateObjects { (asset, _, _) in
+                    self.photosAssets.append(asset)
+                }
+            default: break
+            }
+            DispatchQueue.main.async {
+                self.collectionView?.reloadData()
+            }
+        }
+    }
+    var unauthorizedPlaceholderView: UIView = {
+        
+        let unauthorizedPlaceholderView = UIView()
+        let lockLayer = CAShapeLayer()
+        
+        let lockPath = UIBezierPath()
+        lockPath.move(to: CGPoint(x: 10.75, y: 17.3))
+        lockPath.addLine(to: CGPoint(x: 13.6, y: 17.3))
+        lockPath.addLine(to: CGPoint(x: 13.6, y: 11.69))
+        lockPath.addCurve(to: CGPoint(x: 24.85, y: -0.01), controlPoint1: CGPoint(x: 13.6, y: 5.35), controlPoint2: CGPoint(x: 18.59, y: 0.09))
+        lockPath.addCurve(to: CGPoint(x: 36.4, y: 11.53), controlPoint1: CGPoint(x: 31.19, y: -0.09), controlPoint2: CGPoint(x: 36.4, y: 5.14))
+        lockPath.addLine(to: CGPoint(x: 36.4, y: 17.3))
+        lockPath.addLine(to: CGPoint(x: 39.25, y: 17.3))
+        lockPath.addCurve(to: CGPoint(x: 44, y: 22.11), controlPoint1: CGPoint(x: 41.86, y: 17.3), controlPoint2: CGPoint(x: 44, y: 19.47))
+        lockPath.addLine(to: CGPoint(x: 44, y: 45.19))
+        lockPath.addCurve(to: CGPoint(x: 39.25, y: 50), controlPoint1: CGPoint(x: 44, y: 47.84), controlPoint2: CGPoint(x: 41.86, y: 50))
+        lockPath.addLine(to: CGPoint(x: 10.75, y: 50))
+        lockPath.addCurve(to: CGPoint(x: 6, y: 45.19), controlPoint1: CGPoint(x: 8.14, y: 50), controlPoint2: CGPoint(x: 6, y: 47.84))
+        lockPath.addLine(to: CGPoint(x: 6, y: 22.11))
+        lockPath.addCurve(to: CGPoint(x: 10.75, y: 17.3), controlPoint1: CGPoint(x: 6, y: 19.47), controlPoint2: CGPoint(x: 8.14, y: 17.3))
+        lockPath.close()
+        lockPath.move(to: CGPoint(x: 23.34, y: 32.31))
+        lockPath.addLine(to: CGPoint(x: 23.34, y: 40.58))
+        lockPath.addCurve(to: CGPoint(x: 24.92, y: 42.31), controlPoint1: CGPoint(x: 23.34, y: 41.48), controlPoint2: CGPoint(x: 24.03, y: 42.26))
+        lockPath.addCurve(to: CGPoint(x: 26.66, y: 40.62), controlPoint1: CGPoint(x: 25.87, y: 42.35), controlPoint2: CGPoint(x: 26.66, y: 41.59))
+        lockPath.addLine(to: CGPoint(x: 26.66, y: 32.31))
+        lockPath.addCurve(to: CGPoint(x: 28.79, y: 28.49), controlPoint1: CGPoint(x: 28.03, y: 31.63), controlPoint2: CGPoint(x: 28.93, y: 30.17))
+        lockPath.addCurve(to: CGPoint(x: 25.27, y: 25.01), controlPoint1: CGPoint(x: 28.62, y: 26.63), controlPoint2: CGPoint(x: 27.11, y: 25.14))
+        lockPath.addCurve(to: CGPoint(x: 21.2, y: 28.84), controlPoint1: CGPoint(x: 23.05, y: 24.85), controlPoint2: CGPoint(x: 21.2, y: 26.63))
+        lockPath.addCurve(to: CGPoint(x: 23.34, y: 32.31), controlPoint1: CGPoint(x: 21.2, y: 30.37), controlPoint2: CGPoint(x: 22.07, y: 31.68))
+        lockPath.close()
+        lockPath.move(to: CGPoint(x: 16.93, y: 17.3))
+        lockPath.addLine(to: CGPoint(x: 33.08, y: 17.3))
+        lockPath.addLine(to: CGPoint(x: 33.08, y: 11.53))
+        lockPath.addCurve(to: CGPoint(x: 30.7, y: 5.76), controlPoint1: CGPoint(x: 33.08, y: 9.36), controlPoint2: CGPoint(x: 32.23, y: 7.31))
+        lockPath.addCurve(to: CGPoint(x: 25, y: 3.36), controlPoint1: CGPoint(x: 29.17, y: 4.21), controlPoint2: CGPoint(x: 27.15, y: 3.36))
+        lockPath.addCurve(to: CGPoint(x: 19.3, y: 5.76), controlPoint1: CGPoint(x: 22.85, y: 3.36), controlPoint2: CGPoint(x: 20.83, y: 4.21))
+        lockPath.addCurve(to: CGPoint(x: 16.93, y: 11.53), controlPoint1: CGPoint(x: 17.77, y: 7.31), controlPoint2: CGPoint(x: 16.93, y: 9.36))
+        lockPath.addLine(to: CGPoint(x: 16.93, y: 17.3))
+        lockPath.close()
+        
+        lockLayer.path = lockPath.cgPath
+        lockLayer.fillColor = UIColor.lightGray.cgColor
+        unauthorizedPlaceholderView.layer.addSublayer(lockLayer)
+        return unauthorizedPlaceholderView
+    }()
+
     // MARK: - Initialize
     init() {
         let photosListCollectionViewLayout = UICollectionViewFlowLayout()
@@ -145,35 +208,52 @@ class CatPhotosListController: UICollectionViewController, UICollectionViewDeleg
         self.refreshData()
     }
     
+    /// Layout initialize
     func layoutInit() {
-        self.title = String.localizedString(defaultString: "Photos", key: "CatMediaPicker.PhotosPickerControllerTitle", comment: "")
-        self.view.backgroundColor = UIColor.white
-        self.collectionView?.allowsMultipleSelection = true
-        self.collectionView?.backgroundColor = UIColor.clear
-        self.collectionView?.alwaysBounceVertical = true
-        self.cancelBarButtonItem = UIBarButtonItem(title: String.localizedString(defaultString: "Cancel", key: "CatMediaPicker.Cancel", comment: ""),
+        title = String.localizedString(defaultString: "Photos", key: "CatMediaPicker.PhotosPickerControllerTitle", comment: "")
+        view.backgroundColor = UIColor.white
+        collectionView?.allowsMultipleSelection = true
+        collectionView?.backgroundColor = UIColor.clear
+        collectionView?.alwaysBounceVertical = true
+        cancelBarButtonItem = UIBarButtonItem(title: String.localizedString(defaultString: "Cancel", key: "CatMediaPicker.Cancel", comment: ""),
                                                    style: .plain,
                                                    target: self,
                                                    action: #selector(cancelAction))
-        self.navigationItem.leftBarButtonItem = self.cancelBarButtonItem
-        self.doneBarButtonItem = UIBarButtonItem(title: String.localizedString(defaultString: "Done", key: "CatMediaPicker.Done", comment: ""),
+        navigationItem.leftBarButtonItem = self.cancelBarButtonItem
+        doneBarButtonItem = UIBarButtonItem(title: String.localizedString(defaultString: "Done", key: "CatMediaPicker.Done", comment: ""),
                                                  style: .done,
                                                  target: self,
                                                  action: #selector(doneAction))
-        self.navigationItem.rightBarButtonItem = self.doneBarButtonItem
-        self.collectionView?.register(CatPhotosListCollectionViewCell.self,
+        navigationItem.rightBarButtonItem = self.doneBarButtonItem
+        collectionView?.register(CatPhotosListCollectionViewCell.self,
                                       forCellWithReuseIdentifier: String(describing: CatPhotosListCollectionViewCell.self))
+        unauthorizedPlaceholderView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(unauthorizedPlaceholderView)
+        
+        var constraintArray: [NSLayoutConstraint] = []
+        constraintArray.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[superView]-(<=1)-[unauthorizedPlaceholderView(50)]",
+                                                                          options: NSLayoutFormatOptions.alignAllCenterX,
+                                                                          metrics: nil,
+                                                                          views: ["superView": view,
+                                                                                  "unauthorizedPlaceholderView": unauthorizedPlaceholderView]))
+        constraintArray.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[superView]-(<=1)-[unauthorizedPlaceholderView(50)]",
+                                                                          options: NSLayoutFormatOptions.alignAllCenterY,
+                                                                          metrics: nil,
+                                                                          views: ["superView": view,
+                                                                                  "unauthorizedPlaceholderView": unauthorizedPlaceholderView]))
+        view.addConstraints(constraintArray)
     }
     
+    /// Refresh list
     func refreshData() {
         self.photosAssets.removeAll()
-        let fetchOptions = PHFetchOptions()
-        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-        let fetchResult = PHAsset.fetchAssets(with: self.pickerControllerConfigure.mediaType, options: fetchOptions)
-        fetchResult.enumerateObjects { (asset, _, _) in
-            self.photosAssets.append(asset)
+        if authorizationStatus == .notDetermined {
+            PHPhotoLibrary.requestAuthorization { authorizationStatus in
+                self.authorizationStatus = authorizationStatus
+            }
+        } else {
+            self.authorizationStatus = PHPhotoLibrary.authorizationStatus()
         }
-        self.collectionView?.reloadData()
     }
     
     // MARK: - Action
@@ -246,6 +326,9 @@ class CatPhotosListController: UICollectionViewController, UICollectionViewDeleg
     
     // MARK: - UICollectionViewDataSource
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        UIView.animate(withDuration: 0.1) {
+            self.unauthorizedPlaceholderView.alpha = self.photosAssets.count == 0 ? 1 : 0
+        }
         return photosAssets.count
     }
     
@@ -313,53 +396,53 @@ class CatPhotosListCollectionViewCell: UICollectionViewCell {
     }
     
     override init(frame: CGRect) {
-        self.photoImageView = UIImageView()
-        self.highlightView = UIView()
+        photoImageView = UIImageView()
+        highlightView = UIView()
         super.init(frame: frame)
         self.layoutInit()
     }
     
     func layoutInit() {
-        self.photoImageView.contentMode = .scaleAspectFill
-        self.photoImageView.translatesAutoresizingMaskIntoConstraints = false
+        photoImageView.contentMode = .scaleAspectFill
+        photoImageView.translatesAutoresizingMaskIntoConstraints = false
         
-        self.highlightView.backgroundColor = UIColor.white
-        self.highlightView.alpha = 0
-        self.highlightView.translatesAutoresizingMaskIntoConstraints = false
+        highlightView.backgroundColor = UIColor.white
+        highlightView.alpha = 0
+        highlightView.translatesAutoresizingMaskIntoConstraints = false
         
-        self.checkmarkView.alpha = 0
-        self.checkmarkView.contentMode = .scaleAspectFit
-        self.checkmarkView.translatesAutoresizingMaskIntoConstraints = false
+        checkmarkView.alpha = 0
+        checkmarkView.contentMode = .scaleAspectFit
+        checkmarkView.translatesAutoresizingMaskIntoConstraints = false
         
-        self.contentView.addSubview(self.photoImageView)
-        self.contentView.addSubview(self.highlightView)
-        self.contentView.addSubview(self.checkmarkView)
+        contentView.addSubview(photoImageView)
+        contentView.addSubview(highlightView)
+        contentView.addSubview(checkmarkView)
         
         var constraintArray: [NSLayoutConstraint] = []
         constraintArray.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|[photoImageView]|",
                                                                           options: NSLayoutFormatOptions.alignAllCenterX,
                                                                           metrics: nil,
-                                                                          views: ["photoImageView": self.photoImageView]))
+                                                                          views: ["photoImageView": photoImageView]))
         constraintArray.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|[photoImageView]|",
                                                                           options: NSLayoutFormatOptions.alignAllCenterY,
                                                                           metrics: nil,
-                                                                          views: ["photoImageView": self.photoImageView]))
+                                                                          views: ["photoImageView": photoImageView]))
         constraintArray.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:|[highlightView]|",
                                                                           options: NSLayoutFormatOptions.alignAllCenterX,
                                                                           metrics: nil,
-                                                                          views: ["highlightView": self.highlightView]))
+                                                                          views: ["highlightView": highlightView]))
         constraintArray.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:|[highlightView]|",
                                                                           options: NSLayoutFormatOptions.alignAllCenterY,
                                                                           metrics: nil,
-                                                                          views: ["highlightView": self.highlightView]))
+                                                                          views: ["highlightView": highlightView]))
         constraintArray.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "H:[checkmarkView(20)]-|",
                                                                           options: NSLayoutFormatOptions.alignAllCenterY,
                                                                           metrics: nil,
-                                                                          views: ["checkmarkView": self.checkmarkView]))
+                                                                          views: ["checkmarkView": checkmarkView]))
         constraintArray.append(contentsOf: NSLayoutConstraint.constraints(withVisualFormat: "V:[checkmarkView(20)]-|",
                                                                           options: NSLayoutFormatOptions.alignAllCenterY,
                                                                           metrics: nil,
-                                                                          views: ["checkmarkView": self.checkmarkView]))
+                                                                          views: ["checkmarkView": checkmarkView]))
         self.addConstraints(constraintArray)
     }
     
