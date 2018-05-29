@@ -5,6 +5,6 @@
       location = "group:CatMediaPicker.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:/Users/kcat/Developer/Git/CatMediaPicker/Example.xcodeproj">
+      location = "group:Example.xcodeproj">
    </FileRef>
 </Workspace>
