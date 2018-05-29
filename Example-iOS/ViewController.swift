@@ -15,12 +15,20 @@ class ViewController: UIViewController, CatPhotosPickerControllerDelegate {
         super.viewDidLoad()
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    @IBAction func singleSelection(_ sender: Any) {
         let mediaPicker = CatPhotosPickerController(configure: CatPhotosPickerControllerConfigure())
         mediaPicker.pickerControllerDelegate = self
         self.present(mediaPicker, animated: true, completion: nil)
     }
 
+    @IBAction func multipleSelection(_ sender: Any) {
+        let mediaPickerConfigure = CatPhotosPickerControllerConfigure()
+        mediaPickerConfigure.maximumSelectCount = 10
+        let mediaPicker = CatPhotosPickerController(configure: mediaPickerConfigure)
+        mediaPicker.pickerControllerDelegate = self
+        self.present(mediaPicker, animated: true, completion: nil)
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }

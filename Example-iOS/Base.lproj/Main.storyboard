@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.16" systemVersion="17A277" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.12"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -9,11 +13,35 @@
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jkY-ty-Qqj">
+                                <rect key="frame" x="0.0" y="328.5" width="183.5" height="30"/>
+                                <state key="normal" title="Single Selection"/>
+                                <connections>
+                                    <action selector="singleSelection:" destination="BYZ-38-t0r" eventType="touchUpInside" id="VED-kI-Vhj"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ffX-BV-Vzl">
+                                <rect key="frame" x="191.5" y="328.5" width="183.5" height="30"/>
+                                <state key="normal" title="Multiple Selection "/>
+                                <connections>
+                                    <action selector="multipleSelection:" destination="BYZ-38-t0r" eventType="touchUpInside" id="iK9-Pv-tZT"/>
+                                </connections>
+                            </button>
+                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="ffX-BV-Vzl" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="CfC-sN-BCZ"/>
+                            <constraint firstItem="jkY-ty-Qqj" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="U8S-8r-9Kw"/>
+                            <constraint firstItem="jkY-ty-Qqj" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="UL3-QG-bkX"/>
+                            <constraint firstItem="jkY-ty-Qqj" firstAttribute="width" secondItem="ffX-BV-Vzl" secondAttribute="width" id="dSx-ZE-66g"/>
+                            <constraint firstItem="ffX-BV-Vzl" firstAttribute="leading" secondItem="jkY-ty-Qqj" secondAttribute="trailing" constant="8" id="dqX-qY-vtM"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="ffX-BV-Vzl" secondAttribute="trailing" id="hem-yX-uS1"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                 </viewController>
