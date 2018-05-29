@@ -1,0 +1,5 @@
+language: swift
+osx_image: xcode9
+script: 
+- |
+  xcodebuild clean build -destination 'platform=iOS Simulator,name=iPhone X' -workspace CatMediaPicker.xcworkspace -scheme CatMediaPicker-iOS CODE_SIGNING_REQUIRED=NO

@@ -1,0 +1,4 @@
+framework module CatMediaPicker {
+    header "CatMediaPicker-Swift.h"
+    requires objc
+}
